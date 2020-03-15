@@ -1,6 +1,6 @@
 <template class="he">
   <div class="home">
-    The following people might be able to help you:
+    <h1>Helfer</h1>
     <div id="map"></div>
   </div>
 </template>
@@ -17,7 +17,7 @@ export default {
     var mymap = L.map('map').setView([47.5006194101323, 8.72443199157715], 14)
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      maxZoom: 20,
+      maxZoom: 15,
       id: 'mapbox/streets-v11',
       tileSize: 512,
       zoomOffset: -1,

@@ -18,7 +18,8 @@ import {
   MdField,
   MdCard,
   MdSnackbar,
-  MdSubheader
+  MdSubheader,
+  MdDivider
 } from 'vue-material/dist/components'
 
 Vue.config.productionTip = false
@@ -33,6 +34,7 @@ Vue.use(MdField)
 Vue.use(MdCard)
 Vue.use(MdSnackbar)
 Vue.use(MdSubheader)
+Vue.use(MdDivider)
 window.Vue = Vue
 
 new Vue({

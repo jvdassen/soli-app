@@ -1,13 +1,9 @@
 <template class="he">
   <div class="home">
-    Please pick a point and radius (in meters) where you are willing to do the offered task
-    What would you like to offer?
-    During which times?
-    How can we contact you?
     <form novalidate class="md-layout">
       <md-card class="md-layout-item md-size-50 md-small-size-100">
         <md-card-header>
-          <div class="md-title">Become a helper</div>
+          <div class="md-title">Helfer werden</div>
         </md-card-header>
 
         <md-card-content>
@@ -23,16 +19,22 @@
                 <md-textarea name="description" v-model="description" placeholder="Beschreibung deines Angebots"></md-textarea>
               </md-field>
 
+              <md-divider></md-divider>
+
               <md-subheader>Kontakt</md-subheader>
               <md-field>
                 <label for="description">Textarea</label>
                 <md-textarea name="description" v-model="contact" placeholder="Wann bist du verfügbar und wie kann man dich kontaktieren?"></md-textarea>
               </md-field>
 
-              <md-subheader>Region</md-subheader>
-              <div>Bitte wähle einen Ort und Radius, damit wir wissen für welche Gebiete dein Angebot gilt.</div>
-              <div>Klicke dazu auf die Karte und fülle dann den Radius in Metern aus. Idealerweise ist das Zentrum nicht deine Adresse ;-)</div>
+              <md-divider></md-divider>
 
+              <md-subheader>Region</md-subheader>
+              <div class="location-description">
+                <div>Bitte wähle einen Ort und Radius, damit wir wissen für welche Gebiete dein Angebot gilt.</div>
+                <div>Klicke dazu auf die Karte und fülle dann den Radius in Metern aus. Idealerweise ist das Zentrum nicht deine Adresse ;-)</div>
+
+              </div>
               <div id="create"></div>
 
               <md-field>
@@ -57,6 +59,7 @@
 // @ is an alias to /src
 const L = window.L
 var map = null
+var radiusCircle
 
 export default {
   name: 'BecomeHelper',
@@ -83,8 +86,7 @@ export default {
   },
   computed: {
     valid: function () {
-      return true
-      // return this.task && this.description && this.contact && this.centerlat && this.centerlng && this.radius !== 1
+      return this.task && this.description && this.contact && this.centerlat && this.centerlng && (this.radius > 1)
     }
   },
   mounted: function () {
@@ -96,7 +98,7 @@ export default {
 
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      maxZoom: 20,
+      maxZoom: 15,
       id: 'mapbox/streets-v11',
       tileSize: 512,
       zoomOffset: -1,
@@ -111,8 +113,14 @@ export default {
       app.centerlat = e.latlng.lat
       app.centerlng = e.latlng.lng
       popup.setLatLng(e.latlng)
-        .setContent('Zentrum erfasst! Bitte gib uns den Radius an.')
+        .setContent('Zentrum erfasst!')
         .openOn(mymap)
+
+      app.renderCircle({
+        x: app.centerlat,
+        y: app.centerlng,
+        radius: 50
+      }, mymap)
     }
     mymap.on('click', onMapClick)
 
@@ -123,7 +131,7 @@ export default {
       window.helpers = [
         { x: 47.5076194101323, y: 8.72443199157715, radius: 200, message: 'i can do xy | contact me: help@dude.xy' },
         { x: 47.5006194101323, y: 8.72243199157715, radius: 300, message: 'ill help you shopping | call me: 07812345678' },
-        { x: this.centerlat, y: this.centerlng, radius: this.radius, message: `${this.description}` }
+        { x: this.centerlat, y: this.centerlng, radius: this.radius, message: `${this.description} | contact me: ${this.contact}` }
       ]
     },
     renderCircle: function (item, map) {
@@ -135,7 +143,10 @@ export default {
       })
       circle.bindPopup(item.message)
       circle.addTo(map)
-      window.cc = circle
+      if (radiusCircle) {
+        map.removeLayer(radiusCircle)
+      }
+      radiusCircle = circle
     }
   }
 }
@@ -149,5 +160,11 @@ export default {
 #create {
   height: 300px;
   width: 100%;
+}
+.md-subheader.md-theme-default {
+  padding-left: 0px !important;
+}
+.location-description {
+  margin-bottom: 10px;
 }
 </style>
